@@ -1,6 +1,6 @@
 # qulib
 
-Qlib is a Python library designed for working with quantum computing gates and registers. It provides basic operations to create, manipulate, and work with quantum states and gates using Python.
+qulib is a Python library designed for working with quantum computing gates and registers. It provides basic operations to create, manipulate, and work with quantum states and gates using Python.
 
 ## Features
 
