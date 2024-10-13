@@ -1,5 +1,5 @@
 import numpy as np
-from .Gates import CNOT, SWAP
+from .Gates import SWAP
 
 class QRegister:
     def __init__(self, num_qubits=2, initial_state_matrix=None):
@@ -65,24 +65,27 @@ class QRegister:
 
         return self.dot(operation)
 
-    def _apply_2_bit_gate(self, gate, target):
-        if target == 0:
+    def _apply_2_bit_gate(self, gate, control):
+        """
+        Assumes that qbits are next to each other and that the control is the provided qbit
+        """
+        if control == 0:
             operation = np.kron(gate.matrix, np.eye(2 ** (self.num_qubits-2)))
             return self.dot(operation)
 
-        # check if target is the last qbit
-        if target == self.num_qubits-1:
+        # check if control is the last qbit
+        if control == self.num_qubits-1:
             operation = np.kron(np.eye(2 ** (self.num_qubits-2)), gate.matrix)
             return self.dot(operation)
 
-        # know that the first it not the target
-        operation = np.eye(2 ** (target))
+        # know that the first it not the control
+        operation = np.eye(2 ** (control))
         
         operation = np.kron(operation, gate.matrix)
 
-        # check if there are none targets after the control
-        if target != self.num_qubits-1:
-            operation = np.kron(operation, np.eye(2 ** (self.num_qubits-2-target)))
+        # add the rest of the qbits, if any after target
+        if control != self.num_qubits-1:
+            operation = np.kron(operation, np.eye(2 ** (self.num_qubits-2-control)))
 
         return self.dot(operation)
 
@@ -106,44 +109,65 @@ class QRegister:
 
         return self._apply_1_bit_gate_targets(gate, target_qubits)
 
-    def apply_cnot(self, control, target):
+    def apply_two_qubit_gate(self, gate, control, target):
         """
-        Apply a CNOT gate to the qubits
+        Apply a two qubit gate to the register.
         
         Args:
-            control (int): The control qubit
-            target (int): The target qubit
-            
-        Returns:
-            QRegister: The updated qubit register"""
+            gate: The quantum gate to apply.
+            control (int): The control qubit.
+            target (int): The target qubit.
+        """
         if control == target:
             raise ValueError("Qbits cannot be the same")
         if control >= self.num_qubits or target >= self.num_qubits:
             raise ValueError("Qbit is out of range")
+        if gate.matrix.shape != (4, 4):
+            raise ValueError("Gate is not a two qubit gate")
+        
+        if (abs(control - target) == 1):
+            # qbits are next to each other
+            if control < target:
+                return self._apply_2_bit_gate(gate, control)
+            else:
+                # means control is greater than target, so need swap them
+                print("one opp", control, target)
+                control, target = target, control
 
-        fliped = False
-        if control > target:
-            control, target = target, control
-            fliped = True
+                self._apply_2_bit_gate(SWAP(), control)
+                self._apply_2_bit_gate(gate, control)
+                self._apply_2_bit_gate(SWAP(), control)
 
-        if abs(control - target) != 1:
-            # pg13 https://www.cl.cam.ac.uk/teaching/1920/QuantComp/Quantum_Computing_Lecture_5.pdf
+                return self
+
+        # check if control is smaller than target
+        if control < target:
             # means that the qbits are not next to each other
             # we need to move the control qbit to the target qbit
-            # we use the swap gate to do this
-            # will need to swap the control down to one above the target
-            # then apply the cnot gate
-            # then swap the control back to its original position
             for i in range(control, target-1):
                 self._apply_2_bit_gate(SWAP(), i)
 
-            self._apply_2_bit_gate(CNOT(fliped), target-1)
+            # apply the gate
+            self._apply_2_bit_gate(gate, target-1)
+
+            # move the control back to its original position
+            for i in range(target-2, control-1, -1):
+                self._apply_2_bit_gate(SWAP(), i)
+        else:
+            print("control > target", control, target)
+            control, target = target, control
+
+            # do one more swap to get the control to the target
+            for i in range(control, target-1):
+                self._apply_2_bit_gate(SWAP(), i)
+
+            self._apply_2_bit_gate(SWAP(), target-1)
+            self._apply_2_bit_gate(gate, target-1)
+            self._apply_2_bit_gate(SWAP(), target-1)
 
             for i in range(target-2, control-1, -1):
                 self._apply_2_bit_gate(SWAP(), i)
 
-        else:
-            self._apply_2_bit_gate(CNOT(fliped), control)
 
         return self
 # ------------------------------------------------------------------

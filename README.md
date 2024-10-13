@@ -44,7 +44,7 @@ Requirements
 
 ## Running Tests
 
-Qlib uses pytest for testing. To run tests, install pytest and run:
+qulib uses pytest for testing. To run tests, install pytest and run:
 
 ```bash
 

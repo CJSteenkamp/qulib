@@ -69,8 +69,8 @@ def bell(state='phi+'):
 
 # print(entangle())
 
-qr = QRegister(3)
+qr = QRegister(4)
 qr.apply_gate(X(), 0)
-qr.apply_cnot(0, 2)
-
+qr.apply_gate(X(), 1)
+qr.apply_two_qubit_gate(CNOT(), 1,0)
 print(qr)

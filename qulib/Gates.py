@@ -99,17 +99,11 @@ class T:
         return "T"
 
 class CNOT:
-    def __init__(self, fliped=False):
-        if fliped:
-            self.matrix = np.array([[1, 0, 0, 0], 
-                                    [0, 0, 0, 1], 
-                                    [0, 0, 1, 0], 
-                                    [0, 1, 0, 0]])
-        else:
-            self.matrix = np.block([[1, 0, 0, 0],
-                                    [0, 1, 0, 0],
-                                    [0, 0, 0, 1],
-                                    [0, 0, 1, 0]]).astype(int)
+    def __init__(self):
+        self.matrix = np.block([[1, 0, 0, 0],
+                                [0, 1, 0, 0],
+                                [0, 0, 0, 1],
+                                [0, 0, 1, 0]]).astype(int)
 
     def __str__(self):
         return "CNOT"
@@ -129,7 +123,7 @@ class CCNOT:
         return "CCNOT"
 
 class SWAP:
-    def __init__(self, fliped=False):
+    def __init__(self):
         self.matrix = np.array([[1, 0, 0, 0], 
                                 [0, 0, 1, 0], 
                                 [0, 1, 0, 0], 

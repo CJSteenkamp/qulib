@@ -27,7 +27,7 @@ def test_cnot():
 def test_cnot_last():
     qr = QRegister(3)
     qr.apply_gate(X(), 0)
-    qr.apply_cnot(0, 2)
+    qr.apply_two_qubit_gate(CNOT(), 0, 2)
     result = qr.matrix
     expected = np.array([0, 0, 0, 0, 0, 1, 0, 0])
     assert np.allclose(result, expected, atol=A_TOL, rtol=R_TOL)
