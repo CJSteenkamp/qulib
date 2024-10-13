@@ -98,6 +98,14 @@ class T:
     def __str__(self):
         return "T"
 
+class P:
+    def __init__(self, theta):
+        self.matrix = np.array([[1, 0], 
+                                [0, np.exp(1j * theta)]])
+
+    def __str__(self):
+        return "P"
+
 class CNOT:
     def __init__(self):
         self.matrix = np.block([[1, 0, 0, 0],
@@ -131,3 +139,69 @@ class SWAP:
 
     def __str__(self):
         return "SWAP"
+
+class R:
+    def __init__(self, phi, theta, omega):
+        # phi, theta, omega are in rads
+        cos = np.cos(theta / 2)
+        sin = np.sin(theta / 2)
+
+        self.matrix = np.array([[np.exp(-1j*(phi + omega)/2)*cos, -np.exp(+1j*(phi - omega)/2)*sin],
+                                [np.exp(-1j*(phi - omega)/2)*sin, np.exp(+1j*(phi + omega)/2)*cos]])
+    
+    def __str__(self):
+        return "R"
+
+class CR:
+    def __init__(self, phi, theta, omega):
+        # phi, theta, omega are in rads
+        r_matrix = R(phi, theta, omega).matrix
+        
+        self.matrix = np.block([[np.eye(2), np.zeros((2,2))],
+                                [np.zeros((2,2)), r_matrix]])
+    
+    def __str__(self):
+        return "CR"
+    
+class CRX:
+    def __init__(self, theta):
+        # theta is in rads
+        r_matrix = RX(theta).matrix
+        
+        self.matrix = np.block([[np.eye(2), np.zeros((2,2))],
+                                [np.zeros((2,2)), r_matrix]])
+    
+    def __str__(self):
+        return "CRX"
+    
+class CRY:
+    def __init__(self, theta):
+        # theta is in rads
+        r_matrix = RY(theta).matrix
+        
+        self.matrix = np.block([[np.eye(2), np.zeros((2,2))],
+                                [np.zeros((2,2)), r_matrix]])
+    
+    def __str__(self):
+        return "CRY"
+    
+class CRZ:
+    def __init__(self, theta):
+        # theta is in rads
+        r_matrix = RZ(theta).matrix
+        
+        self.matrix = np.block([[np.eye(2), np.zeros((2,2))],
+                                [np.zeros((2,2)), r_matrix]])
+    
+    def __str__(self):
+        return "CRZ"
+
+class CP:
+    def __init__(self, theta):
+        p_matrix = P(theta).matrix
+        
+        self.matrix = np.block([[np.eye(2), np.zeros((2,2))],
+                                [np.zeros((2,2)), p_matrix]])
+    
+    def __str__(self):
+        return "CP"
