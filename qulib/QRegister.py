@@ -131,7 +131,6 @@ class QRegister:
                 return self._apply_2_bit_gate(gate, control)
             else:
                 # means control is greater than target, so need swap them
-                print("one opp", control, target)
                 control, target = target, control
 
                 self._apply_2_bit_gate(SWAP(), control)
@@ -154,7 +153,6 @@ class QRegister:
             for i in range(target-2, control-1, -1):
                 self._apply_2_bit_gate(SWAP(), i)
         else:
-            print("control > target", control, target)
             control, target = target, control
 
             # do one more swap to get the control to the target

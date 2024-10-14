@@ -100,6 +100,7 @@ class T:
 
 class P:
     def __init__(self, theta):
+        """Phase gate, also known as the U1 gate"""
         self.matrix = np.array([[1, 0], 
                                 [0, np.exp(1j * theta)]])
 
