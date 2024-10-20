@@ -28,8 +28,8 @@ class Z:
     
 class Y:
     def __init__(self):
-        self.matrix = np.array([[0, -1j], 
-                                [1j, 0]])
+        self.matrix = np.array([[0, 1j], 
+                                [-1j, 0]])
 
     def __str__(self):
         return "Y"
@@ -58,8 +58,8 @@ class RY:
         # theta is in rads
         sin = np.sin(theta / 2)
         cos = np.cos(theta / 2)
-        self.matrix = np.array([[cos, -sin], 
-                                [sin, cos]])
+        self.matrix = np.array([[cos, sin], 
+                                [-sin, cos]])
 
     def __str__(self):
         return "RY"
@@ -206,3 +206,8 @@ class CP:
     
     def __str__(self):
         return "CP"
+
+class C_U:
+    def __init__(self, u):
+        self.matrix = np.block([[np.eye(2), np.zeros((2, 2))], 
+                                [np.zeros((2, 2)), u]])
